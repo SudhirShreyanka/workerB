@@ -1,0 +1,29 @@
+{
+  "name": "email-worker-backend",
+  "version": "1.0.0",
+  "description": "Secure Node.js & Express email sending API with Google SMTP and Nodemailer for Render deployment",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "email-api",
+    "backend",
+    "nodemailer",
+    "render",
+    "gmail-smtp"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "nodemailer": "^10.0.16"
+  }
+}
