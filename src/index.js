@@ -1,11 +1,20 @@
 const express = require('express');
+const dns = require('dns');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
 const { config, logConfigStatus } = require('./config');
 const { authenticateToken } = require('./middleware/auth');
 const { sendMail } = require('./mailer');
 
+// Force DNS resolution to prefer IPv4 over IPv6 on cloud hosts like Render
+if (dns.setDefaultResultOrder) {
+  dns.setDefaultResultOrder('ipv4first');
+}
+
 const app = express();
+
+// Trust reverse proxy headers (Cloudflare, Render, Railway, etc.)
+app.set('trust proxy', 1);
 
 /**
  * 1. CORS Configuration
@@ -64,6 +73,7 @@ const emailRateLimiter = rateLimit({
   max: 30, // Limit each IP to 30 dispatches per window
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false },
   message: {
     status: 'error',
     error: 'Too Many Requests',
@@ -149,9 +159,9 @@ app.post('/api/send-email', emailRateLimiter, authenticateToken, async (req, res
       });
     }
 
-    const isNetworkTimeout = error.code === 'ETIMEDOUT' || error.code === 'ECONNREFUSED' || error.code === 'ESOCKET';
+    const isNetworkTimeout = error.code === 'ETIMEDOUT' || error.code === 'ECONNREFUSED' || error.code === 'ESOCKET' || error.code === 'ENETUNREACH';
     const clientMessage = isNetworkTimeout
-      ? `SMTP connection timed out (${error.code || 'BLOCKED'}). Cloud provider firewall blocked outbound SMTP ports.`
+      ? `SMTP network connection failed (${error.code || 'BLOCKED'}). Ensure IPv4 reachability and open SMTP ports (587).`
       : 'The SMTP server was unable to send the email. Please verify recipient address and SMTP credentials.';
 
     return res.status(502).json({

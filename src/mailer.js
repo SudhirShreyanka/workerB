@@ -19,6 +19,7 @@ function getTransporter() {
         user: config.gmailUser,
         pass: config.gmailAppPassword,
       },
+      family: 4, // Crucial: Force IPv4 to prevent ENETUNREACH on Render/cloud networks
       connectionTimeout: 10000,
       greetingTimeout: 10000,
       socketTimeout: 15000,
