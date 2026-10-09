@@ -9,7 +9,7 @@ const config = {
   gmailUser: process.env.GMAIL_USER ? process.env.GMAIL_USER.trim() : '',
   gmailAppPassword: process.env.GMAIL_APP_PASSWORD ? process.env.GMAIL_APP_PASSWORD.replace(/\s+/g, '') : '',
   apiSecret: process.env.API_SECRET ? process.env.API_SECRET.trim() : '',
-  frontendOrigin: process.env.FRONTEND_ORIGIN ? process.env.FRONTEND_ORIGIN.trim() : '*',
+  frontendOrigin: process.env.FRONTEND_ORIGIN ? process.env.FRONTEND_ORIGIN.trim().replace(/\/+$/, '') : '*',
   smtpHost: process.env.SMTP_HOST || 'smtp.gmail.com',
   smtpPort: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT, 10) : 587,
   smtpSecure: process.env.SMTP_SECURE === 'true' || process.env.SMTP_PORT === '465',
